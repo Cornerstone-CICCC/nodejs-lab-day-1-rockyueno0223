@@ -1,0 +1,32 @@
+form{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 320px;
+  margin: 18px auto;
+}
+
+form label{
+  display: flex;
+  flex-direction: column;
+}
+
+input{
+  width: 100%;
+}
+
+button{
+  display: block;
+  width: 100%;
+  margin: 18px auto 0;
+  padding: 4px;
+}
+
+.error-message{
+  color: red;
+  text-align: center;
+
+  /* This will change */
+  display: none;
+}

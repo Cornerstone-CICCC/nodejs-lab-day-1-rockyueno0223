@@ -1,0 +1,73 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>Register</h1>
+    <form class="register-form">
+      <label>
+        Username
+        <input type="text" name="username" id="username" />
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" id="password" />
+      </label>
+      <label>
+        Firstname
+        <input type="text" name="firstname" id="firstname" />
+      </label>
+      <label>
+        Lastname
+        <input type="text" name="lastname" id="lastname" />
+      </label>
+      <button type="submit">Register</button>
+    </form>
+
+    <p class="error-message" style="color: red; display: none;"></p>
+  </body>
+</html>
+
+<script>
+  const form = document.querySelector(".register-form") as HTMLFormElement;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const username = formData.get("username");
+    const password = formData.get("password");
+    const firstname = formData.get("firstname");
+    const lastname = formData.get("lastname");
+
+    const response = await fetch(`http://localhost:3500/api/users/sign-up`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        password: password,
+        firstname: firstname,
+        lastname: lastname,
+      }),
+      credentials: "include",
+    });
+    const data = await response.json();
+    if (data.success) {
+      window.location.href = `/profile?username=${username}`;
+    } else {
+      const errorMessageElement = document.querySelector(
+        ".error-message"
+      ) as HTMLParagraphElement;
+      if (errorMessageElement) {
+        errorMessageElement.textContent = data.message;
+        errorMessageElement.style.display = "block";
+      }
+    }
+  });
+</script>

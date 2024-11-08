@@ -1,0 +1,82 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>Profile</h1>
+    <span>Username:</span>
+    <div class="profile-username"></div>
+    <span>Firstname:</span>
+    <div class="profile-firstname"></div>
+    <span>Lastname:</span>
+    <div class="profile-lastname"></div>
+
+    <button class="logout-btn">Logout</button>
+  </body>
+  <script>
+    const checkAuth = async () => {
+      const authRes = await fetch(
+        `http://localhost:3500/api/users/check-auth`,
+        {
+          credentials: "include",
+        }
+      );
+      if (!authRes.ok) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const username = params.get("username");
+
+      const profileResponse = await fetch(
+        `http://localhost:3500/api/users/profile/${username}`,
+        {
+          credentials: "include",
+        }
+      );
+
+      if (profileResponse.ok) {
+        const userData = await profileResponse.json();
+
+        const usernameElement = document.querySelector(".profile-username");
+        if (usernameElement) {
+          usernameElement.textContent = userData.username;
+        }
+
+        const firstnameElement = document.querySelector(".profile-firstname");
+        if (firstnameElement) {
+          firstnameElement.textContent = userData.firstname;
+        }
+
+        const lastnameElement = document.querySelector(".profile-lastname");
+        if (lastnameElement) {
+          lastnameElement.textContent = userData.lastname;
+        }
+      }
+    };
+
+    checkAuth();
+
+    const logoutUser = async () => {
+      const res = await fetch(`http://localhost:3500/api/users/logout`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        window.location.href = "/login";
+      } else {
+        console.error("Failed to log out.");
+      }
+    };
+
+    const logoutBtnElement = document.querySelector(".logout-btn");
+    logoutBtnElement?.addEventListener("click", () => logoutUser());
+  </script>
+</html>
